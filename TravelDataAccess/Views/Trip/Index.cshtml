@@ -1,0 +1,74 @@
+﻿@model IEnumerable<TravelDataAccess.Models.Trip>
+
+@{
+    ViewData["Title"] = "Trip List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@{
+    var isAdmin = User.IsInRole("Admin");
+}
+
+<h1>Trip List</h1>
+
+@if (isAdmin)
+{
+    <p>
+        <a asp-action="Create">Create New</a>
+    </p>
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Code)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Destination)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Code)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Destination)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Status)
+            </td>
+            <td>
+                    @if (isAdmin)
+                    {
+                        <a asp-action="Edit" asp-route-id="@item.TripId">Edit</a>
+                        <a asp-action="Details" asp-route-id="@item.TripId">Details</a>
+                        <a asp-action = "Delete" asp-route-id = "@item.TripId"> Delete </a>
+                    }
+                    else
+                    {
+                        <a asp-action="Details" asp-route-id="@item.TripId">Details</a>
+                        <form asp-controller="Booking" asp-action="Create" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="tripId" value="@item.TripId" />
+                            <button class="btn btn-primary" type="submit">Book</button>
+                        </form>
+                    }
+
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
